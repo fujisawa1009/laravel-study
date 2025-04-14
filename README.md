@@ -18,6 +18,16 @@ docker-compose.ymlに差し替え
 データベースの設定(マイグレーション)コマンド --Laravel11よりデフォルトDBがmysqlからsqliteとなったため以下対応が必要
 ./vendor/bin/sail artisan migrate
 
+ローカル接続
+http://localhost/
+
+エイリアスの登録
+echo $SHELL
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.bashrc
+
+exec $SHELL -l
+sail artisan -V
 
 
 # section03
