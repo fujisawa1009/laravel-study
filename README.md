@@ -1,13 +1,28 @@
-[memo]
+[memo] udemy PHP基礎の学習後に見てほしいLaravel入門(Laravel12対応)
 使用する開発環境・ツール
 Laravel / Laravel Sail / PHP(8.2) / Docker / MySQL / phpMyAdmin / Mailtrap
 
-# section02 開発環境構築とプロジェクト作成(macOS)
+# section01 コース紹介 //done 
 
+# section02 開発環境構築とプロジェクト作成(macOS) //done
+■dockerのインストール等の設定
+■プロジェクト作成コマンド
 curl -s "https://laravel.build/laravel-study?with=mysql,mailpit" | bash
 
-phpMyAdminの追加
-docker-compose.ymlに差し替え
+■phpMyAdminの追加
+※最後のnetworks:の直前に下記を追記
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+            - mysql
+        ports:
+            - 8888:80
+        environment:
+            PMA_USER: '${DB_USERNAME}'
+            PMA_PASSWORD: '${DB_PASSWORD}'
+            PMA_HOST: mysql
+        networks:
+            - sail
 
 開発環境構築と起動コマンド
 ./vendor/bin/sail up -d
@@ -15,7 +30,8 @@ docker-compose.ymlに差し替え
 開発環境の停止コマンド
 ./vendor/bin/sail down
 
-データベースの設定(マイグレーション)コマンド --Laravel11よりデフォルトDBがmysqlからsqliteとなったため以下対応が必要
+⬜︎データベースの設定(マイグレーション)コマンド
+Laravel11よりデフォルトDBがmysqlからsqliteとなったため以下対応が必要(sailが起動している状態で実行すること)
 ./vendor/bin/sail artisan migrate
 
 ローカル接続
@@ -28,7 +44,6 @@ echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.bashr
 
 exec $SHELL -l
 sail artisan -V
-
 
 # section03
 # section04
