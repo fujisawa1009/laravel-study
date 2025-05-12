@@ -52,15 +52,23 @@ sail artisan -V
 ・言語設定:  'locale' => env('APP_LOCALE', 'ja'),
 環境変数設定.envにて行うこと
 
-■
+# section3 プロジェクト作成windows編 //done
 
-# section03
-# section04
-# section05
-# section06
-# section07
-# section08
-# section09
+# section04 ルーティング
+Laravelではpublicディレクトリがドキュメントルートになる
+ルーティングファイル
+routes/web.php
+構文：Route::get('パス', function () { 処理内容 });
+Route::get('/hellow-world', function () { return 'hellow-world'; }); にアクセスすると文字表示など
+アロー関数での記載構文  ※PHP7.4から対応
+Route::get('/hellow-world', fn () => 'arrow hellow'); 
+
+# section05 ビュー
+# section06 コントローラー
+
+# section07 リクエスト
+# section08　セッション
+# section09 ファイル操作
 # section10
 # section11
 # section12
