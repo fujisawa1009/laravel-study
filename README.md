@@ -37,12 +37,14 @@ Laravel11よりデフォルトDBがmysqlからsqliteとなったため以下対�
 ローカル接続
 http://localhost/
 
-エイリアスの登録
+■sailエイリアスの登録
+使用しているシェルの確認
 echo $SHELL
+エイリアスの登録(/bin/zsh と表示された場合)
 echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
-echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.bashrc
-
+設定反映
 exec $SHELL -l
+確認
 sail artisan -V
 
 # section03
