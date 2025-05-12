@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn () => view('welcome'));
+
+//Route::get('/hellow', function () { return view('hellow', ['name' => 'yuta',couse => 'laravel']);
 
 //Route::get('/hellow-world', function () { return 'hellow-world'; });
 

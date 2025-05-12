@@ -2,6 +2,8 @@
 使用する開発環境・ツール
 Laravel / Laravel Sail / PHP(8.2) / Docker / MySQL / phpMyAdmin / Mailtrap
 
+2025/05/13：section6から
+
 # section01 コース紹介 //done 
 
 # section02 開発環境構築とプロジェクト作成(macOS) //done
@@ -63,7 +65,20 @@ Route::get('/hellow-world', function () { return 'hellow-world'; }); にアク�
 アロー関数での記載構文  ※PHP7.4から対応
 Route::get('/hellow-world', fn () => 'arrow hellow'); 
 
-# section05 ビュー
+# section05 ビュー //done
+■ビュファイル：resources/views/配下にblade.phpファイルを配置配置
+使用方法：ルーティングでview関数を使用する
+Route::get('/', fn () => view('welcome')); ///welcome.blade.php読み込み
+※第一引数にビュファイル名、第二引数に連想配列(ビュー内で使用できる変数を定義する)
+
+■bladeテンプレート: {{ $tilet }} この囲い機能でクロスサイトスクリプティング対策となる
+ディレクティブ構文、、phpコード埋め込みには@php....@endphpの間に記載する
+条件分岐：@if、@elseif、@else、@endif..etc
+繰り返し:@while、@for、@foreach、@forelse
+条件クラス：@classでCSSクラスを条件つきで出力する
+■レイアウト：ヘッダーなどの共通部分をまとめる機能(@yiledディレクティブを使用)
+以下commandファイルに記載例が複数あり
+
 # section06 コントローラー
 
 # section07 リクエスト

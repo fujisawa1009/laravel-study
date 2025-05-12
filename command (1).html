@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>コマンド</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/default.min.css">
+    <style>
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        #js-tab a.active{
+            color: #fff;
+            background-color: #aaa;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        pre code.filename {
+            background-color: #aaa;
+            border-radius: 0;
+            color: #fff;
+            display: inline;
+            padding: 2px 4px;
+        }
+
+        pre {
+            position: relative;
+            white-space: pre-wrap;
+        }
+
+        .js-copy {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            color: #444;
+            background: #fff;
+            padding: 2px 5px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filename + code + .js-copy {
+            transform: translateY(1em);
+        }
+
+        .js-copy:hover {
+            opacity: .6;
+        }
+        .js-copy::before {
+            content: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="1em" height="1em"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z" fill="%23444"/></svg>');
+            vertical-align: -0.125em;
+            margin-right: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>コマンド一覧</h1>
+    <p>最終更新日: 2023/11/22</p>
+
+    <ul id="js-tab">
+        <li><a href="#" data-content-id="environment" class="active">開発環境構築とプロジェクト作成(macOS)</a></li>
+        <li><a href="#" data-content-id="environment-win">開発環境構築とプロジェクト作成(Windows)</a></li>
+        <li><a href="#" data-content-id="view">ビュー</a></li>
+        <li><a href="#" data-content-id="controller">コントローラ</a></li>
+        <li><a href="#" data-content-id="request">リクエスト</a></li>
+        <li><a href="#" data-content-id="session">セッション</a></li>
+        <li><a href="#" data-content-id="file">ファイル</a></li>
+        <li><a href="#" data-content-id="validation">バリデーション</a></li>
+        <li><a href="#" data-content-id="mail">メール</a></li>
+        <li><a href="#" data-content-id="db">Laravelでのデータベース操作</a></li>
+        <li><a href="#" data-content-id="rdb">リレーショナルデータベース</a></li>
+        <li><a href="#" data-content-id="auth">認証</a></li>
+    </ul>
+
+    <div id="environment" class="tab-content active">
+        <h2>開発環境構築とプロジェクト作成(macOS)</h2>
+        <h3>プロジェクト作成</h3>
+        <pre><code class="language-bash">curl -s &quot;https://laravel.build/laravel-study?with=mysql,mailpit&quot; | bash</code></pre>
+        <h3>phpMyAdminの追加</h3>
+        <p>最後のnetworks:の直前に下記を追記<br>※インデントが重要なので勝手に整形しないように<br>添付のdocker-compose.ymlに差し替えを推奨</p>
+        <pre><code class="filename">/docker-compose.yml</code><code class="language-yaml">    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+            - mysql
+        ports:
+            - 8888:80
+        environment:
+            PMA_USER: &#39;${DB_USERNAME}&#39;
+            PMA_PASSWORD: &#39;${DB_PASSWORD}&#39;
+            PMA_HOST: mysql
+        networks:
+            - sail</code></pre>
+        <h3>開発環境構築と起動コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail up -d</code></pre>
+        <h3>開発環境の停止コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail down</code></pre>
+        <h3>データベースの設定(マイグレーション)コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail artisan migrate</code></pre>
+        <h3>プロジェクトURL</h3>
+        <p><a href="http://localhost" target="_blank">http://localhost</a></p>
+        <h2>エイリアスの登録</h2>
+        <p>① 使用しているシェルの確認 </p>
+        <pre><code class="language-bash">echo $SHELL</code></pre>
+        <p>②-A エイリアスの登録(<code>/bin/zsh</code> と表示された場合)</p>
+        <pre><code class="language-bash">echo &quot;alias sail=&#39;[ -f sail ] &amp;&amp; bash sail || bash vendor/bin/sail&#39;&quot; &gt;&gt; ~/.zshrc</code></pre>
+        <p>②-B エイリアスの登録(<code>/bin/bash</code> と表示された場合)</p>
+        <pre><code class="language-bash">echo &quot;alias sail=&#39;[ -f sail ] &amp;&amp; bash sail || bash vendor/bin/sail&#39;&quot; &gt;&gt; ~/.bashrc</code></pre>
+        <p>③設定反映</p>
+        <pre><code class="language-bash">exec $SHELL -l</code></pre>
+        <p>④確認</p>
+        <pre><code class="language-bash">sail artisan -V</code></pre>
+    </div>
+
+    <div id="environment-win" class="tab-content">
+        <h2>開発環境構築とプロジェクト作成(Windows)</h2>
+        <h3>WSLの設定</h3>
+        <pre><code class="filename">PowerShell</code><code class="language-bash">wsl --install</code></pre>
+        <h3>Windows Terminalのインストール</h3>
+        <a href="https://www.microsoft.com/ja-jp/p/windows-terminal/9n0dx20hk701" target="_blank">https://www.microsoft.com/ja-jp/p/windows-terminal/9n0dx20hk701</a>(Microsoft Store)
+        <h3>Docker Desktopのインストール</h3>
+        <a href="https://www.docker.com/get-started/" target="_blank">https://www.docker.com/get-started/</a>
+        <h3>プロジェクト作成</h3>
+        <pre><code class="filename language-bash">Windows Terminal(Ubuntu)</code><code class="language-bash">curl -s &quot;https://laravel.build/laravel-study?with=mysql,mailpit&quot; | bash</code></pre>
+        <h3>プロジェクトフォルダのパス</h3>
+        <pre><code class="language-plaintext">\\wsl$\Ubuntu\home\ユーザ名</code></pre>
+        <h3>VS Code用拡張のインストール(Visual Studio Codeを使っている場合のみ)</h3>
+        <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack" target="_blank">https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack</a>
+
+        <h3>phpMyAdminの追加</h3>
+        <p>最後のnetworks:の直前に下記を追記<br>※インデントが重要なので勝手に整形しないように<br>添付のdocker-compose.ymlに差し替えを推奨</p>
+        <pre><code class="filename">/docker-compose.yml</code><code class="language-yaml">    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        depends_on:
+            - mysql
+        ports:
+            - 8888:80
+        environment:
+            PMA_USER: &#39;${DB_USERNAME}&#39;
+            PMA_PASSWORD: &#39;${DB_PASSWORD}&#39;
+            PMA_HOST: mysql
+        networks:
+            - sail</code></pre>
+        <h3>開発環境構築と起動コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail up -d</code></pre>
+        <h3>開発環境の停止コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail down</code></pre>
+        <h3>データベースの設定(マイグレーション)コマンド</h3>
+        <pre><code class="language-bash">./vendor/bin/sail artisan migrate</code></pre>
+        <h3>プロジェクトURL</h3>
+        <p><a href="http://localhost" target="_blank">http://localhost</a></p>
+        <h2>エイリアスの登録</h2>
+        <p>① 使用しているシェルの確認 </p>
+        <pre><code class="language-bash">echo $SHELL</code></pre>
+        <p>②-A エイリアスの登録(<code>/bin/zsh</code> と表示された場合)</p>
+        <pre><code class="language-bash">echo &quot;alias sail=&#39;[ -f sail ] &amp;&amp; bash sail || bash vendor/bin/sail&#39;&quot; &gt;&gt; ~/.zshrc</code></pre>
+        <p>②-B エイリアスの登録(<code>/bin/bash</code> と表示された場合)</p>
+        <pre><code class="language-bash">echo &quot;alias sail=&#39;[ -f sail ] &amp;&amp; bash sail || bash vendor/bin/sail&#39;&quot; &gt;&gt; ~/.bashrc</code></pre>
+        <p>③設定反映</p>
+        <pre><code class="language-bash">exec $SHELL -l</code></pre>
+        <p>④確認</p>
+        <pre><code class="language-bash">sail artisan -V</code></pre>
+    </div>
+    <div id="view" class="tab-content">
+        <h2>ビュー</h2>
+        <h3>レイアウトの例</h3>
+        <pre><code class="filename">/resources/views/layouts/default.blade.php</code><code class="language-php">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;【ここにページごとに個別のタイトルが入ります】&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            display: grid;
+            grid-template: "header" auto "contents" 1fr "footer" auto/100%;
+            max-width: 1280px;
+            min-height: 100vh;
+            margin: 0 auto;
+        }
+
+        header {
+            grid-area: header;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        nav ul {
+            display: flex;
+            padding: 0;
+            list-style: none;
+        }
+        nav li {
+            margin-right: 10px;
+        }
+        a {
+            color: #0f83fd;
+        }
+        img {
+            width: 100%;
+        }
+        main {
+            grid-area: contents;
+            padding: 10px 0;
+        }
+        footer {
+            grid-area: footer;
+            text-align: center;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;h1&gt;Laravel9学習&lt;/h1&gt;
+        &lt;nav&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href=&quot;/&quot;&gt;トップ&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;/curriculum&quot;&gt;カリキュラム&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;/events&quot;&gt;イベント&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;#&quot;&gt;サービス&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;#&quot;&gt;お問い合わせ&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main&gt;
+        【ここにページごとに個別のタイトルが入ります】
+        【ここにページごとに個別のコンテンツが入ります】
+    &lt;/main&gt;
+
+    &lt;footer&gt;
+        &lt;p&gt;&amp;copy; 2023 ●●▲▲&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+        <h3>トップページ</h3>
+        <pre><code class="filename">/resources/views/index.blade.php</code><code class="language-php">@extends(&#39;layouts.default&#39;)
+
+@section(&#39;title&#39;, &#39;さぁ、はじめよう！&#39;)
+@section(&#39;content&#39;)
+    &lt;p&gt;
+        Laravelの学習をはじめての方をサポートする学習サイトです&lt;br&gt;
+        このサイトでは、Laravelの基礎だけでなく開発環境構築やデータベースに関しても解説します&lt;br&gt;
+        これから学習を始めるににあたり、まずは下記の内容をご確認下さい&lt;br&gt;
+        ~~~~ 以下省略 ~~~~
+    &lt;/p&gt;
+@endsection</code></pre>
+        <h3>カリキュラムページ</h3>
+        <pre><code class="filename">/resources/views/curriculum.blade.php</code><code class="language-php">@extends(&#39;layouts.default&#39;)
+
+@section(&#39;title&#39;, &#39;カリキュラムについて&#39;)
+@section(&#39;content&#39;)
+    &lt;section&gt;
+        &lt;h3&gt;準備&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;環境構築(sail)&lt;/li&gt;
+            &lt;li&gt;データベース(phpMyAdmin)&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section&gt;
+        &lt;h3&gt;ページ表示&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;ルーティング&lt;/li&gt;
+            &lt;li&gt;ビューファイル&lt;/li&gt;
+            &lt;li&gt;コントローラ&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section&gt;
+        &lt;h3&gt;フォームとリクエスト&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;フォームとリクエスト&lt;/li&gt;
+            &lt;li&gt;CSRF&lt;/li&gt;
+            &lt;li&gt;REST&lt;/li&gt;
+            &lt;li&gt;バリデーション&lt;/li&gt;
+            &lt;li&gt;フォームリクエスト&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section&gt;
+        &lt;h3&gt;データベース&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;モデル&lt;/li&gt;
+            &lt;li&gt;クエリビルダー&lt;/li&gt;
+            &lt;li&gt;スコープ&lt;/li&gt;
+            &lt;li&gt;正規化とリレーション&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section&gt;
+        &lt;h3&gt;認証&lt;/h3&gt;
+        &lt;ul&gt;
+            &lt;li&gt;ログイン&lt;/li&gt;
+            &lt;li&gt;リダイレクト&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/section&gt;
+@endsection</code></pre>
+    </div>
+    <div id="controller" class="tab-content">
+        <h2>コントローラ</h2>
+        <h3>サンプルコード</h3>
+        <pre><code class="filename">/routes/web.php</code><code class="language-php">// 世界の時間
+Route::get(&#39;/world-time&#39;, function () {
+    $timeDiff = [
+        &#39;東京&#39; =&gt; 0,
+        &#39;シンガポール&#39; =&gt; -1,
+        &#39;パリ&#39; =&gt; -8,
+        &#39;ロンドン&#39; =&gt; -9,
+        &#39;ニューヨーク&#39; =&gt; -14,
+        &#39;ロサンゼルス&#39; =&gt; -17,
+        &#39;ハワイ&#39; =&gt; -19,
+    ];
+    $times = array_map(fn($diff) =&gt; now()-&gt;addHours($diff), $timeDiff);
+    return view(&#39;world-time&#39;, [&#39;times&#39; =&gt; $times]);
+});
+
+// おみくじ
+Route::get(&#39;/omikuji&#39;, function () {
+    $fortunes = [&#39;大吉&#39;, &#39;中吉&#39;, &#39;小吉&#39;, &#39;吉&#39;, &#39;末吉&#39;, &#39;凶&#39;, &#39;大凶&#39;];
+    $resultIndex = array_rand($fortunes);
+    $result = $fortunes[$resultIndex];
+    return view(&#39;omikuji&#39;, [&#39;result&#39; =&gt; $result]);
+});
+
+// モンティ・ホール問題
+Route::get(&#39;/monty-hall&#39;, function () {
+    $results = [];
+    for ($i = 0; $i &lt; 1000; $i++) {
+        $options = [true, false, false];
+        shuffle($options);
+
+        $selectedIndex = array_rand($options);
+        $notSelectedIndexes = array_filter($options, fn($index) =&gt; $index !== $selectedIndex, ARRAY_FILTER_USE_KEY);
+        $removeIndex = array_search(false, $notSelectedIndexes);
+        unset($notSelectedIndexes[$removeIndex]);
+
+        $changedIndex = key($notSelectedIndexes);
+        $results[] = $options[$changedIndex];
+    }
+    $wonCount = count(array_filter($results, fn($result) =&gt; $result));
+    return view(&#39;monty-hall&#39;, [&#39;results&#39; =&gt; $results, &#39;wonCount&#39; =&gt; $wonCount]);
+});
+</code></pre>
+        <h3>コントローラ作成</h3>
+        <pre><code class="language-bash">sail artisan make:controller UtilityController</code></pre>
+        <pre><code class="language-bash">sail artisan make:controller GameController</code></pre>
+    </div>
+    <div id="request" class="tab-content">
+        <h2>リクエスト</h2>
+        <h3>ダミーログイン処理</h3>
+        <pre><code class="language-php">public function login(Request $request)
+{
+    if ($request-&gt;get(&#39;email&#39;) === &#39;user@example.com&#39; &amp;&amp; $request-&gt;get(&#39;password&#39;) === &#39;12345678&#39;) {
+        return &#39;ログイン成功&#39;;
+    }
+    return &#39;ログイン失敗&#39;;
+}
+</code></pre>
+        <h3>ログインフォーム</h3>
+        <pre><code class="filename">/resources/views/login.blade.php</code><code class="language-php">@extends(&#39;layouts.default&#39;)
+
+@section(&#39;title&#39;, &#39;ログイン&#39;)
+@section(&#39;content&#39;)
+    &lt;form action=&quot;{{ route(&#39;login&#39;) }}&quot; method=&quot;POST&quot;&gt;
+        &lt;div&gt;&lt;label&gt;メールアドレス: &lt;input type=&quot;email&quot; name=&quot;email&quot;&gt;&lt;/label&gt;&lt;/div&gt;
+        &lt;div&gt;&lt;label&gt;パスワード: &lt;input type=&quot;password&quot; name=&quot;password&quot;&gt;&lt;/label&gt;&lt;/div&gt;
+        &lt;button type=&quot;submit&quot;&gt;ログイン&lt;/button&gt;
+    &lt;/form&gt;
+@endsection
+</code></pre>
+        <h3>コントローラ作成(リソース用メソッドの雛形込)</h3>
+        <pre><code class="language-bash">sail artisan make:controller EventController -r</code></pre>
+        <h3>登録ルートの確認</h3>
+        <pre><code class="language-bash">sail artisan route:list</code></pre>
+    </div>
+    <div id="session" class="tab-content">
+        <h2>セッション</h2>
+        <h3>ハイロー用アクション</h3>
+        <pre><code class="filename">/app/Http/Controllers/HiLowController.php</code><code class="language-php">public function index() {
+    $dealersNumber = random_int(1, 12);
+
+    return view(&#39;hi-low.index&#39;, [&#39;dealersNumber&#39; =&gt; $dealersNumber]);
+}
+
+public function result(Request $request) {
+    // ディーラーの数字(hidden値で送信されたもの)を取得
+    $dealersNumber = $request-&gt;get(&#39;dealersNumber&#39;);
+
+    // プレイヤーの数字を1~12の中からランダムに取得
+    $playersNumber = random_int(1, 12);
+    // プレーヤーの数字がディーラーのものより大きいか判定(大きい場合にtrue)
+    $isHigh = $playersNumber &gt; $dealersNumber;
+    // 予想が当たったかの判定
+    $isCorrect = ($isHigh &amp;&amp; $request-&gt;get(&#39;guess&#39;) === &#39;high&#39;) || (!$isHigh &amp;&amp; $request-&gt;get(&#39;guess&#39;) === &#39;low&#39;);
+    return view(&#39;hi-low.result&#39;, [
+        &#39;dealersNumber&#39; =&gt; $dealersNumber,
+        &#39;playersNumber&#39; =&gt; $playersNumber,
+        &#39;isCorrect&#39; =&gt; $isCorrect,
+    ]);
+}
+</code></pre>
+        <h3>ハイロー用ビューファイル(選択画面)</h3>
+        <pre><code class="filename">/resources/views/hi-low/index.blade.php</code><code class="language-php">@extends(&#39;layouts.default&#39;)
+
+@section(&#39;title&#39;, &#39;ハイアンドロー&#39;)
+@section(&#39;content&#39;)
+    &lt;p&gt;ディーラのカードは...『{{ $dealersNumber }}』&lt;/p&gt;
+    &lt;form method=&quot;POST&quot; action=&quot;{{ route(&#39;hi-low&#39;) }}&quot;&gt;
+        @csrf
+        &lt;input type=&quot;hidden&quot; name=&quot;dealersNumber&quot; value=&quot;{{ $dealersNumber }}&quot; /&gt;
+        &lt;button type=&quot;submit&quot; name=&quot;guess&quot; value=&quot;high&quot;&gt;自分のカードが大きい&lt;/button&gt;
+        &lt;button type=&quot;submit&quot; name=&quot;guess&quot; value=&quot;low&quot;&gt;自分のカードが同じか小さい&lt;/button&gt;
+    &lt;/form&gt;
+@endsection
+</code></pre>
+        <h3>ハイロー用ビューファイル(結果画面)</h3>
+        <pre><code class="filename">/resources/views/hi-low/result.blade.php</code><code class="language-php">@extends(&#39;layouts.default&#39;)
+
+@section(&#39;title&#39;, &#39;ハイアンドロー(結果)&#39;)
+@section(&#39;content&#39;)
+    &lt;p&gt;ディーラのカードは...『{{ $dealersNumber }}』&lt;/p&gt;
+    &lt;p&gt;あなたのカードは...『{{ $playersNumber }}』&lt;/p&gt;
+    @if($isCorrect)
+        &lt;p&gt;おめでとうございます！ &lt;br&gt;あたりです！！&lt;/p&gt;
+    @else
+        &lt;p&gt;ざんねん。。 &lt;br&gt;はずれです&lt;/p&gt;
+    @endif
+    &lt;a href=&quot;{{ route(&#39;hi-low&#39;) }}&quot;&gt;もう一度挑戦する&lt;/a&gt;
+@endsection
+</code></pre>
+        <h3>ハイロー用ルート</h3>
+        <pre><code class="filename">/routes/web.php</code><code class="language-php">// ハイローゲーム
+Route::get(&#39;/hi-low&#39;, [HiLowController::class, &#39;index&#39;])-&gt;name(&#39;hi-low&#39;);
+Route::post(&#39;/hi-low&#39;, [HiLowController::class, &#39;result&#39;]);
+</code></pre>
+    </div>
+    <div id="validation" class="tab-content">
+        <h2>バリデーション</h2>
+        <h3>お問い合わせフォームのバリデーション</h3>
+        <pre><code class="filename">/app/Http/Controllers/ContactController.php</code><code class="language-php">function sendMail(Request $request) {
+    $validated = $request-&gt;validate([
+        &#39;name&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;max:255&#39;],
+        &#39;name_kana&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;max:255&#39;, &#39;regex:/^[ァ-ロワンヴー]*$/u&#39;],
+        &#39;phone&#39; =&gt; [&#39;nullable&#39;, &#39;regex:/^0(\d-?\d{4}|\d{2}-?\d{3}|\d{3}-?\d{2}|\d{4}-?\d|\d0-?\d{4})-?\d{4}$/&#39;],
+        &#39;email&#39; =&gt; [&#39;required&#39;, &#39;email&#39;],
+        &#39;body&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;max:2000&#39;],
+    ]);
+
+    // これ以降の行は入力エラーがなかった場合のみ実行されます
+    // 登録処理(実際はメール送信などを行う)
+    Log::debug($validated[&#39;name&#39;]. &#39;さんよりお問い合わせがありました&#39;);
+    return to_route(&#39;contact.complete&#39;);
+}
+</code></pre>
+        <h3>Laravel Lang(言語パッケージ)の公式サイト</h3>
+        <p><a href="https://laravel-lang.com/" target="_blank">https://laravel-lang.com/</a></p>
+        <h3>Laravel LangのGithubリポジトリ</h3>
+        <p><a href="https://github.com/Laravel-Lang/lang" target="_blank">https://github.com/Laravel-Lang/lang</a></p>
+        <h3>言語パッケージインストール</h3>
+        <pre><code class="language-bash">sail composer require laravel-lang/lang:^10.9 --dev</code></pre>
+        <h3>日本語用言語ファイルのコピー</h3>
+        <pre><code class="language-bash">sail bash | cp -r vendor/laravel-lang/lang/locales/ja lang</code></pre>
+        <h3>フォームリクエスト作成</h3>
+        <pre><code class="language-bash">sail artisan make:request ContactRequest</code></pre>
+    </div>
+    <div id="file" class="tab-content">
+        <h2>ファイル</h2>
+        <h3>シンボリック登録</h3>
+        <pre><code class="language-bash">sail artisan storage:link</code></pre>
+    </div>
+    <div id="mail" class="tab-content">
+        <h2>メール</h2>
+        <h3>Laravelのバージョン確認</h3>
+        <pre><code class="language-bash">sail artisan -V</code></pre>
+        <h3>全パッケージのアップデート(Laravelを含む)</h3>
+        <pre><code class="language-bash">sail composer update</code></pre>
+        <h3>Mailableクラスの作成</h3>
+        <pre><code class="language-bash">sail artisan make:mail ContactAdminMail</code></pre>
+        <h3>メール本文(管理者宛の通知)</h3>
+        <pre><code class="filename">/resources/emails/contact/admin.blade.php</code><code class="language-text">●●●● ●●●● 様よりお問い合わせ下記の内容でお問い合わせがありました
+内容を確認しご対応をお願いします。
+
+【お問い合わせ内容】
+お名前: ●●●● ●●●●
+お名前（フリガナ）: ●●●● ●●●●
+メールアドレス: ●●●●
+電話番号: ●●●●
+お問い合わせ内容:
+●●●●
+
+※このメールは配信専用のアドレスで配信されています。
+このメールに返信されても返信内容の確認およびご返答ができませんので、ご了承ください。</code></pre>
+        <h3>メール本文(ユーザ宛の自動返信)</h3>
+        <pre><code class="filename">/resources/emails/contact/user.blade.php</code><code class="language-text">●●●● ●●●● 様
+この度はお問い合わせいただきまして、誠にありがとうございます。
+本日より２～３営業日以内に内容を確認し、追って担当者からご連絡差し上げますので、
+今しばらくお待ちくださいますようお願いいたします。
+
+尚、3営業日経っても弊社からの連絡がない場合は
+お問い合わせが正しく送信されていない可能性がございます。
+その際はお手数ではございますが、再度ご連絡いただけますようお願いいたします。
+
+【お問い合わせ内容】
+お名前: ●●●● ●●●●
+お名前（フリガナ）: ●●●● ●●●●
+メールアドレス: ●●●@●●●●
+電話番号: ●●●-●●●●-●●●●
+お問い合わせ内容:
+●●●●●●●●●●●●●●●●●●●●●
+●●●●●●●●●●●●●●●●●●●●●
+
+※このメールは配信専用のアドレスで配信されています。
+このメールに返信されても返信内容の確認およびご返答ができませんので、ご了承ください。</code></pre>
+        <h3>Mailpit</h3>
+        <p><a href="http://localhost:8025/" target="_blank">http://localhost:8025/</a></p>
+    </div>
+    <div id="db" class="tab-content">
+        <h2>Laravelでのデータベース操作</h2>
+        <h3>phpMyAdmin</h3>
+        <p><a href="http://localhost:8888/" target="_blank">http://localhost:8888/</a></p>
+
+        <h3>マイグレーションファイル作成</h3>
+        <pre><code class="language-bash">sail artisan make:migration create_blogs_table</code></pre>
+        <pre><code class="filename">/database/migrations/yyyy_mm_dd_hhmmss_create_blogs_table.php</code><code class="language-php">public function up()
+{
+    Schema::create(&#39;blogs&#39;, function (Blueprint $table) {
+        $table-&gt;id();
+        $table-&gt;string(&#39;title&#39;);
+        $table-&gt;string(&#39;image&#39;);
+        $table-&gt;text(&#39;body&#39;);
+        $table-&gt;timestamps();
+    });
+}
+</code></pre>
+        <h3>マイグレーションの実行</h3>
+        <pre><code class="language-bash">sail artisan migrate</code></pre>
+        <h3>マイグレーション履歴の確認</h3>
+        <pre><code class="language-bash">sail artisan migrate:status</code></pre>
+        <h3>ロールバックの実行</h3>
+        <pre><code class="language-bash">sail artisan migrate:rollback</code></pre>
+        <h3>モデルの作成</h3>
+        <pre><code class="language-bash">sail artisan make:model Blog -cr</code></pre>
+        <h3>ディレクトリを指定したコントローラの作成</h3>
+        <pre><code class="language-bash">sail artisan make:controller Admin/AdminBlogController -r</code></pre>
+        <h3>ブログ登録用フォームリクエストの作成</h3>
+        <pre><code class="language-bash">sail artisan make:request Admin/StoreBlogRequest</code></pre>
+        <pre><code class="filename">/app/Http/Requests/Admin/StoreBlogRequest.php</code><code class="language-php">public function rules()
+{
+    return [
+        &#39;title&#39; =&gt; [&#39;required&#39;, &#39;max:255&#39;],
+        &#39;image&#39; =&gt; [
+            &#39;required&#39;,
+            &#39;file&#39;, // ファイルがアップロードされている
+            &#39;image&#39;, // 画像ファイルである
+            &#39;max:2000&#39;, // ファイル容量が2000kb以下である
+            &#39;mimes:jpeg,jpg,png&#39;, // 形式はjpegかpng
+            &#39;dimensions:min_width=300,min_height=300,max_width=1200,max_height=1200&#39;, // 画像の解像度が300px * 300px ~ 1200px * 1200px
+        ],
+        &#39;body&#39; =&gt; [&#39;required&#39;, &#39;max:20000&#39;],
+    ];
+}
+</code></pre>
+        <h3>シーディングの実行(ブログ用)</h3>
+        <pre><code class="language-bash">sail artisan db:seed --class=BlogSeeder</code></pre>
+    </div>
+
+    <div id="rdb" class="tab-content">
+        <h2>リレーショナルデータベース</h2>
+
+        <h3>カテゴリ用モデルとマイグレーションの作成</h3>
+        <pre><code class="language-bash">sail artisan make:model Category -m</code></pre>
+        <pre><code class="filename">/database/migrations/yyyy_mm_dd_hhmmss_create_categories_table.php</code><code class="language-php">public function up()
+{
+    Schema::create(&#39;categories&#39;, function (Blueprint $table) {
+        $table-&gt;id();
+        $table-&gt;string(&#39;name&#39;)-&gt;comment(&#39;カテゴリ名&#39;);
+        $table-&gt;timestamps();
+    });
+}
+</code></pre>
+        <h3>シーディングの実行(カテゴリ用)</h3>
+        <pre><code class="language-bash">sail artisan db:seed --class=CategorySeeder</code></pre>
+        <h3>ブログテーブル変更マイグレーションの作成(category_idカラム追加)</h3>
+        <pre><code class="language-bash">sail artisan make:migration add_category_id_column_to_blogs_table</code></pre>
+        <h3>シーディングの実行(カテゴリを考慮したブログ用)</h3>
+        <pre><code class="language-bash">sail artisan db:seed --class=BlogSeeder2</code></pre>
+        <h3>ねこ用モデルとマイグレーションの作成</h3>
+        <pre><code class="language-bash">sail artisan make:model Cat -m</code></pre>
+        <pre><code class="filename">/database/migrations/yyyy_mm_dd_hhmmss_create_cats_table.php</code><code class="language-php">public function up()
+{
+    Schema::create(&#39;cats&#39;, function (Blueprint $table) {
+        $table-&gt;id();
+        $table-&gt;string(&#39;name&#39;)-&gt;comment(&#39;名前&#39;);
+        $table-&gt;string(&#39;breed&#39;)-&gt;comment(&#39;種類&#39;);
+        $table-&gt;integer(&#39;gender&#39;)-&gt;comment(&#39;性別(1:オス,2:メス)&#39;);
+        $table-&gt;date(&#39;date_of_birth&#39;)-&gt;comment(&#39;生年月日&#39;);
+        $table-&gt;string(&#39;image&#39;)-&gt;comment(&#39;画像&#39;);
+        $table-&gt;string(&#39;introduction&#39;)-&gt;comment(&#39;紹介文&#39;);
+        $table-&gt;timestamps();
+    });
+}
+</code></pre>
+        <h3>シーディングの実行(ねこ用)</h3>
+        <pre><code class="language-bash">sail artisan db:seed --class=CatSeeder</code></pre>
+        <h3>ねこリレーションのための中間テーブル用マイグレーションの作成</h3>
+        <pre><code class="language-bash">sail artisan make:migration create_blog_cat_table</code></pre>
+        <pre><code class="filename">/database/migrations/yyyy_mm_dd_hhmmss_create_blog_cat_table.php</code><code class="language-php">public function up()
+{
+    Schema::create(&#39;blog_cat&#39;, function (Blueprint $table) {
+        $table-&gt;id();
+        $table-&gt;foreignId(&#39;blog_id&#39;)-&gt;constrained();
+        $table-&gt;foreignId(&#39;cat_id&#39;)-&gt;constrained();
+        $table-&gt;timestamps();
+    });
+}
+</code></pre>
+    </div>
+    <div id="auth" class="tab-content">
+        <h2>認証</h2>
+        <h3>ユーザ登録関連</h3>
+        <h4>ユーザ管理用コントローラ作成</h4>
+        <pre><code class="language-bash">sail artisan make:controller Admin/UserController -r --model=User</code></pre>
+        <h4>マイグレーション作成</h4>
+        <pre><code class="language-bash">sail artisan make:migration add_columns_to_users_table</code></pre>
+        <pre><code class="filename">/database/migrations/yyyy_mm_dd_hhmmss_add_columns_to_users_table.php</code><code class="language-php">public function up()
+{
+    Schema::table(&#39;users&#39;, function (Blueprint $table) {
+        $table-&gt;string(&#39;image&#39;)-&gt;after(&#39;name&#39;)-&gt;comment(&#39;画像&#39;);
+        $table-&gt;string(&#39;introduction&#39;)-&gt;after(&#39;image&#39;)-&gt;comment(&#39;自己紹介文&#39;);
+    });
+}
+</code></pre>
+        <pre><code class="language-php">public function down()
+{
+    Schema::table(&#39;users&#39;, function (Blueprint $table) {
+        $table-&gt;dropColumn([&#39;image&#39;, &#39;introduction&#39;]);
+    });
+}
+</code></pre>
+        <h4>ユーザ登録用フォームリクエスト</h4>
+        <pre><code class="language-bash">sail artisan make:request Admin/StoreUserRequest</code></pre>
+        <pre><code class="filename">/app/Http/Requests/Admin/StoreUserRequest.php</code><code class="language-php">public function rules()
+{
+    return [
+        &#39;name&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;max:255&#39;],
+        &#39;email&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;email&#39;, &#39;max:255&#39;, &#39;unique:users&#39;],
+        &#39;password&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;min:8&#39;, &#39;confirmed&#39;],
+        &#39;image&#39; =&gt; [
+            &#39;required&#39;,
+            &#39;file&#39;, // ファイルがアップロードされている
+            &#39;image&#39;, // 画像ファイルである
+            &#39;max:2000&#39;, // ファイル容量が2000kb以下である
+            &#39;mimes:jpeg,jpg,png&#39;, // 形式はjpegかpng
+            &#39;dimensions:min_width=100,min_height=100,max_width=300,max_height=300&#39;, // 画像の解像度が100px * 100px ~ 300px * 300px
+        ],
+        &#39;introduction&#39; =&gt; [&#39;required&#39;, &#39;string&#39;, &#39;max:255&#39;],
+    ];
+}
+
+// 属性名の翻訳
+public function attributes()
+{
+    return [
+        &#39;introduction&#39; =&gt; &#39;自己紹介文&#39;
+    ];
+}
+</code></pre>
+
+        <h3>認証関連</h3>
+        <h4>認証用コントローラ作成</h4>
+        <pre><code class="language-bash">sail artisan make:controller Admin/AuthController</code></pre>
+        <h4>ログイン処理</h4>
+        <pre><code class="filename">/app/Http/Controllers/Admin/AuthController.php</code><code class="language-php">public function showLoginForm()
+{
+    return view(&#39;admin.login&#39;);
+}
+
+public function login(Request $request)
+{
+    // バリデーション(フォームリクエストに書き換え可)
+    $credentials = $request-&gt;validate([
+        &#39;email&#39; =&gt; [&#39;required&#39;, &#39;email&#39;],
+        &#39;password&#39; =&gt; [&#39;required&#39;],
+    ]);
+
+    // ログイン情報が正しいか
+    // Auth::attemptメソッドでログイン情報が正しいか検証
+    if (Auth::attempt($credentials)) {
+        // セッションを再生成する処理(セキュリティ対策)
+        $request-&gt;session()-&gt;regenerate();
+
+        // ミドルウェアに対応したリダイレクト(後述)
+        // 下記はredirect(&#39;/admin/blogs&#39;)に類似
+        return redirect()-&gt;intended(&#39;/admin/blogs&#39;);
+    }
+
+    // ログイン情報が正しくない場合のみ実行される処理(return すると以降の処理は実行されないため)
+    // 一つ前のページ(ログイン画面)にリダイレクト
+    // その際にwithErrorsを使ってエラーメッセージで手動で指定する
+    // リダイレクト後のビュー内でold関数によって直前の入力内容を取得出来る項目をonlyInputで指定する
+    return back()-&gt;withErrors([
+        &#39;email&#39; =&gt; &#39;メールアドレスまたはパスワードが正しくありません&#39;,
+    ])-&gt;onlyInput(&#39;email&#39;);
+}
+</code></pre>
+        <h4>ログイン用ルート</h4>
+        <pre><code class="filename">/routes/web.php</code><code class="language-php">Route::get(&#39;/admin/login&#39;, [AuthController::class, &#39;showLoginForm&#39;])-&gt;name(&#39;admin.login&#39;);
+Route::post(&#39;/admin/login&#39;, [AuthController::class, &#39;login&#39;]);
+</code></pre>
+
+
+
+        <h4>ログアウト処理</h4>
+        <pre><code class="filename">/app/Http/Controllers/Admin/AuthController.php</code><code class="lang-php"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logout</span><span class="hljs-params">(Request $request)</span>
+</span>{
+    <span class="hljs-comment">// ログアウト処理</span>
+    Auth::logout();
+    <span class="hljs-comment">// 現在使っているセッションを無効化(セキュリティ対策のため)</span>
+    $request-&gt;session()-&gt;invalidate();
+    <span class="hljs-comment">// セッションを無効化を再生成(セキュリティ対策のため)</span>
+    $request-&gt;session()-&gt;regenerateToken();
+
+    <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">'/'</span>);
+}
+</code></pre>
+        <h4>ログアウト用ルート</h4>
+        <pre><code class="language-php">Route::post(&#39;/admin/logout&#39;, [AuthController::class, &#39;logout&#39;])-&gt;name(&#39;admin.logout&#39;);</code></pre>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+<script>
+    // シンタックスハイライト
+    hljs.highlightAll()
+    hljs.configure({'ignoreUnescapedHTML': true})
+
+    // タブ
+    document.querySelectorAll('#js-tab a').forEach(tab => {
+        tab.addEventListener('click', e => {
+            document.querySelectorAll('#js-tab a').forEach(tabContent => {
+                tabContent.classList.remove('active')
+            })
+            e.target.classList.add('active')
+            document.querySelectorAll('.tab-content').forEach(tabContent => {
+                tabContent.classList.remove('active')
+            })
+            document.getElementById(e.target.dataset.contentId).classList.add('active')
+        })
+    })
+
+    // コピー
+    document.querySelectorAll('pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.classList.add('js-copy')
+        btn.textContent = 'COPY';
+        btn.addEventListener('click', e => {
+            const selection = window.getSelection()
+            const pre = e.target.previousElementSibling
+            selection.selectAllChildren(pre)
+            navigator.clipboard.writeText(selection)
+            selection.empty()
+        })
+        pre.appendChild(btn)
+    })
+</script>
+</body>
+</html>
