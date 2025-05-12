@@ -47,6 +47,13 @@ exec $SHELL -l
 確認
 sail artisan -V
 
+■タイムゾーン設定など日本用の設定
+・タイムゾーン設定:  'timezone' => 'Asia/Tokyo',
+・言語設定:  'locale' => env('APP_LOCALE', 'ja'),
+環境変数設定.envにて行うこと
+
+■
+
 # section03
 # section04
 # section05
