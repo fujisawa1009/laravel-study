@@ -80,6 +80,19 @@ Route::get('/', fn () => view('welcome')); ///welcome.blade.php読み込み
 以下commandファイルに記載例が複数あり
 
 # section06 コントローラー
+サンプルのルーティングファイルを貼り付け-->routes/web.php
+サンプルのビューファイルを3つ配置
+resources/views/monty-hall.blade.php --> /monty-hallにアクセス
+resources/views/omikuji.blade.php -->  /omikujiにアクセス
+resources/views/world-time.blade.php -->/world-timeにアクセス
+
+コントローラ作成コマンド-->実行により/app/Http/Controllerにそれぞれのファイルが作成される
+sail artisan make:controller UtilityController
+sail artisan make:controller GameController
+
+⬜︎ルーティング useするのを忘れず行う
+use App\Http\Controllers\GameController;
+Route::get('/monty-hall', [GameController::class, 'montyHall']);
 
 # section07 リクエスト
 # section08　セッション
